@@ -17,6 +17,15 @@ It supports multiple AI environments including **OpenCode**, **Cursor**, **Gemin
 - **Symbolic Linking**: Efficiently links skills to projects without duplication, keeping them in sync.
 - **Project Isolation**: Manage different sets of skills for different projects.
 
+## 💡 Why skm?
+
+- **Centralized Efficiency**: Skills are cloned only once (`~/.skills-management/repo`) and shared across infinite projects via symbolic links. This saves significant disk space and ensures all your projects use the same curated version of a skill.
+- **Precision (Sparse Checkout)**: Only download what you need. If a GitHub repository contains hundreds of skills but you only want one, `skm` uses Git's sparse-checkout to download only that specific subdirectory. No more cloning massive repositories for a single prompt file.
+- **Automatic Environment Awareness**: You don't need to know where Cursor, Claude, or OpenCode stores their skills. `skm` automatically detects your project environment and handles the directory structures for you.
+- **Clean & Non-Intrusive**: Since skills are symlinked, your project folder stays clean. No extra `.git` folders or heavy files are added to your project's version control.
+- **Self-healing**: Proactively detects and helps you clean up broken symbolic links if a global skill is deleted.
+- **Version Sync**: One-click check for updates across all your global skills to keep your local "AI brain" sharp.
+
 ## 📦 Installation
 
 This tool can be installed directly from npm:
@@ -92,7 +101,7 @@ Select **"2. list(type)"** to manage skills for the current project.
     - **Note**: `skm` handles complex paths like `github:user/repo/path/to/skill` by creating a unique folder like `github__user__repo__path__to__skill`.
 
 ### Cross-Platform Compatibility (Windows)
-`skm` is fully compatible with Windows. 
+`skm` is fully compatible with Windows.
 - On **macOS/Linux**, it uses standard symbolic links.
 - On **Windows**, it automatically uses **Directory Junctions** (a type of symbolic link for folders) to ensure capability without requiring Administrator privileges or Developer Mode.
 
