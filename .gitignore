@@ -1,0 +1,64 @@
+# Node dependencies
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+*.log
+
+# Runtime / temp
+tmp/
+temp/
+*.tmp
+
+# Build output
+dist/
+build/
+out/
+public/build/
+
+# Framework / bundler caches
+.cache/
+.next/
+.nuxt/
+.serverless/
+.vite/
+.esbuild/
+
+# Coverage
+coverage/
+nyc_output/
+
+# Env files (contains secrets)
+.env
+.env.*.local
+
+# TypeScript
+*.tsbuildinfo
+
+# Package manager
+.pnp/
+.pnp.js
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE / editor
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Misc
+*.orig
+*.bak
+.vagrant/
+
+#
+.sisyphus
+.opencode
+AGENTS.md
