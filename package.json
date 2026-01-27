@@ -1,5 +1,5 @@
 {
-  "name": "skills-management",
+  "name": "@nnnggel/skills-management",
   "version": "1.0.1",
   "main": "index.js",
   "description": "A CLI tool to manage and synchronize AI coding agent skills",

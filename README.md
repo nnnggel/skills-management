@@ -31,7 +31,7 @@ It supports multiple AI environments including **OpenCode**, **Cursor**, **Gemin
 This tool can be installed directly from npm:
 
 ```bash
-npm install -g skills-management
+npm install -g @nnnggel/skills-management
 ```
 
 Or install from source:
