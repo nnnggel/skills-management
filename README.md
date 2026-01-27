@@ -29,7 +29,7 @@ Or install from source:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/skills-management.git
+git clone https://github.com/nnnggel/skills-management.git
 cd skills-management
 npm install
 npm run build
@@ -76,6 +76,27 @@ Select **"2. list(type)"** to manage skills for the current project.
 | **Antigravity** | `.antigravity` | `.antigravity/skills` |
 | **Claude** | `.claude` | `.claude/skills` |
 | **GitHub** | `.github` | `.github/skills` |
+
+---
+
+## 🏗️ Directory Structure & Internals
+
+`skm` stores its global data and configuration in your home directory at `~/.skills-management`. This architecture ensures that skills are downloaded once and shared across multiple projects.
+
+### Data Layout:
+
+- **`config.json`**: Global configuration file. It stores system-level settings and metadata.
+- **`repo/`**: The heart of the management system.
+    - **`versions.json`**: The skill registry. It tracks all added skills, their unique IDs, current commit hashes (for version control), and original paths.
+    - **`github__[user]__[repo]__[subpath]/`**: Local Git repositories. `skm` flattens the ID (replacing `/` with `__`) to create safe directory names.
+    - **Note**: `skm` handles complex paths like `github:user/repo/path/to/skill` by creating a unique folder like `github__user__repo__path__to__skill`.
+
+### Cross-Platform Compatibility (Windows)
+`skm` is fully compatible with Windows. 
+- On **macOS/Linux**, it uses standard symbolic links.
+- On **Windows**, it automatically uses **Directory Junctions** (a type of symbolic link for folders) to ensure capability without requiring Administrator privileges or Developer Mode.
+
+
 
 ## 📄 License
 
