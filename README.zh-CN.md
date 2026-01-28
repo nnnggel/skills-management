@@ -90,14 +90,13 @@ skm
 
 `skm` 自动识别以下目录结构并安装技能：
 
-| AI 类型 | 识别目录 | 技能安装路径 |
-|---------|-----------------|--------------------------|
-| **OpenCode** | `.opencode` | `.opencode/skills` |
-| **Cursor** | `.cursor` | `.cursor/skills` |
-| **Gemini** | `.gemini` | `.gemini/skills` |
-| **Antigravity** | `.antigravity` | `.antigravity/skills` |
-| **Claude** | `.claude` | `.claude/skills` |
-| **GitHub** | `.github` | `.github/skills` |
+| AI 类型 | 技能安装路径 |
+|---------|---------------------------|
+| **Antigravity** | `.gemini/antigravity/global_skills/skills` 或 `.agent/skills` |
+| **GitHub** | `.copilot/skills` 或 `.github/skills` |
+| **Cursor** | `.cursor/skills` |
+| **Claude** | `.claude/skills` |
+| **OpenCode** | `.opencode/skills` |
 
 ---
 
@@ -121,6 +120,9 @@ skm
 ---
 
 ## 📝 更新日志
+
+### v1.0.4
+- 调整了识别 AI 工具的目录，与官方配置保持一致
 
 ### v1.0.3
 - 支持本地技能 (Local Skill)：可以直接从本地目录添加技能

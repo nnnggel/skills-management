@@ -88,14 +88,13 @@ Select **"2. list(type)"** to manage skills for the current project.
 
 `skm` automatically detects and installs skills into these directories:
 
-| AI Type | Detected Folder | Skills Installation Path |
-|---------|-----------------|--------------------------|
-| **OpenCode** | `.opencode` | `.opencode/skills` |
-| **Cursor** | `.cursor` | `.cursor/skills` |
-| **Gemini** | `.gemini` | `.gemini/skills` |
-| **Antigravity** | `.antigravity` | `.antigravity/skills` |
-| **Claude** | `.claude` | `.claude/skills` |
-| **GitHub** | `.github` | `.github/skills` |
+| AI Type | Skills Installation Path |
+|---------|---------------------------|
+| **Antigravity** | `.gemini/antigravity/global_skills/skills` or `.agent/skills` |
+| **GitHub** | `.copilot/skills` or `.github/skills` |
+| **Cursor** | `.cursor/skills` |
+| **Claude** | `.claude/skills` |
+| **OpenCode** | `.opencode/skills` |
 
 ---
 
@@ -119,6 +118,9 @@ Select **"2. list(type)"** to manage skills for the current project.
 ---
 
 ## 📝 Changelog
+
+### v1.0.4
+- Adjusted AI tool detection directories to match official configurations
 
 ### v1.0.3
 - Local Skill Support: Add skills directly from local directories
