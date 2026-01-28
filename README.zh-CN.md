@@ -110,7 +110,7 @@ skm
 - **`config.json`**: 全局配置文件，存储系统级设置和元数据。
 - **`repo/`**: 管理系统的核心目录。
     - **`skills.json`**: 技能注册表（数据库）。记录了所有已添加技能的 ID、当前 Commit Hash（用于版本追踪）、检出类型和路径信息。
-    - **`github__[user]__[repo]__[subpath]/`**: 本地 Git 仓库存储中心。`skm` 会将 ID 扁平化（将 `/` 替换为 `__`）以创建安全的文件目录名。例如 `github:user/repo/path` 会被存储为 `github__user__repo__path`。
+    - **`[type]__[name]/`**: 本地 Skill 仓库存储中心。`skm` 会将 ID 扁平化（将 `/` 替换为 `__`）以创建安全的文件目录名。例如 `github:user/repo/path` 会被存储为 `github__user__repo__path`，`local:myskill` 会被存储为 `local__myskill`。
 
 ### Windows 兼容性说明
 `skm` 完全兼容 Windows 系统。

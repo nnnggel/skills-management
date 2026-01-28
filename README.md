@@ -108,7 +108,7 @@ Select **"2. list(type)"** to manage skills for the current project.
 - **`config.json`**: Global configuration file. It stores system-level settings and metadata.
 - **`repo/`**: The heart of the management system.
     - **`skills.json`**: The skill registry. It tracks all added skills, their unique IDs, current commit hashes (for version control), and original paths.
-    - **`github__[user]__[repo]__[subpath]/`**: Local Git repositories. `skm` flattens the ID (replacing `/` with `__`) to create safe directory names.
+    - **`[type]__[name]/`**: Local skill repository storage. `skm` flattens the ID (replacing `/` with `__`) to create safe directory names. For example, `github:user/repo/path` becomes `github__user__repo__path`, and `local:myskill` becomes `local__myskill`.
     - **Note**: `skm` handles complex paths like `github:user/repo/path/to/skill` by creating a unique folder like `github__user__repo__path__to__skill`.
 
 ### Cross-Platform Compatibility (Windows)
