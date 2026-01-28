@@ -2,7 +2,7 @@
 
 简体中文 | [English](./README.md)
 
-`skm` 是一个强大的命令行工具，用于在各种 AI 编程代理和项目中管理与同步“技能”（Skills，即提示词库、指令集或能力模块）。它作为一个中心枢纽，帮助你从 GitHub 下载技能，并将其选择性地链接到本地 AI 项目配置中。
+`skm` 是一个强大的命令行工具，用于在各种 AI 编程代理和项目中管理与同步“技能”（Skills，即提示词库、指令集或能力模块）。它作为一个中心枢纽，帮助你从 GitHub 或本地目录添加技能，并将其选择性地链接到本地 AI 项目配置中。
 
 支持多种 AI 环境，包括 **OpenCode**、**Cursor**、**Gemini**、**Antigravity**、**Claude** 和 **GitHub** 项目。
 
@@ -12,10 +12,13 @@
 
 - **全局技能仓库**：集中管理所有的 AI 技能。
 - **GitHub 集成**：直接从 GitHub 仓库或指定子目录添加技能（支持稀疏检出）。
+- **本地技能支持**：支持从本地目录添加技能，方便开发和调试。
 - **版本控制**：检查远程更新并同步技能版本。
 - **项目检测**：自动检测当前目录下的 AI 项目类型。
 - **软链接管理**：通过符号链接将技能高效注入项目，避免文件复制，保持同步。
 - **项目隔离**：为不同项目配置不同的技能组合。
+
+![示意图](repo.png)
 
 ## 💡 为什么选择 skm?
 
@@ -24,7 +27,7 @@
 - **自动化环境感知**：你不需要记住 Cursor、Claude 或 OpenCode 把技能存在哪里。`skm` 会自动识别你的项目环境并处理对应的目录结构。
 - **整洁且无侵入**：由于使用的是软链接，你的项目文件夹保持纯净。不会有额外的 `.git` 文件夹或庞大的二进制文件进入你的项目版本控制。
 - **自我维护**：主动检测并帮助你清理失效的软链接（例如当全局技能被删除时）。
-- **版本同步**：一键检查所有全局技能的远程更新，确保你的“AI 大脑”始终处于最新状态。
+- **版本同步**：检查技能的远程更新，确保你的“AI 大脑”始终处于最新状态。
 
 ## 📦 安装指南
 
@@ -59,10 +62,18 @@ skm
 
 在主菜单选择 **"1. repo"** 来管理你的全局技能库。
 
-- **添加技能 (Add skill)**：输入 GitHub URL 下载技能。
-  - 支持完整仓库：`https://github.com/user/repo`
-  - 支持特定子目录：`https://github.com/user/repo/tree/main/path/to/skill`
-- **更新技能 (Update)**：自动检查远程仓库是否有新提交，并更新本地副本。
+#### 添加技能 (Add skill)
+
+**GitHub 类型**：
+- 支持完整仓库：`https://github.com/user/repo` (例子：https://github.com/blader/humanizer)
+- 支持特定子目录：`https://github.com/user/repo/tree/main/path/to/skill` (例子：https://github.com/anthropics/skills/tree/main/skills/pdf)
+
+**Local 类型**：
+- 支持本地目录：`/local/path/to/skill` (例子：`~/Desktop/myskill`)
+
+#### 其他操作
+
+- **更新技能 (Update)**：自动检查远程仓库是否有新提交，并更新本地副本（仅支持 GitHub 类型）。
 - **删除技能 (Delete)**：从全局仓库中移除技能。
 
 ### 2. 项目技能管理 (`list`)
@@ -98,7 +109,7 @@ skm
 
 - **`config.json`**: 全局配置文件，存储系统级设置和元数据。
 - **`repo/`**: 管理系统的核心目录。
-    - **`versions.json`**: 技能注册表（数据库）。记录了所有已添加技能的 ID、当前 Commit Hash（用于版本追踪）、检出类型和路径信息。
+    - **`skills.json`**: 技能注册表（数据库）。记录了所有已添加技能的 ID、当前 Commit Hash（用于版本追踪）、检出类型和路径信息。
     - **`github__[user]__[repo]__[subpath]/`**: 本地 Git 仓库存储中心。`skm` 会将 ID 扁平化（将 `/` 替换为 `__`）以创建安全的文件目录名。例如 `github:user/repo/path` 会被存储为 `github__user__repo__path`。
 
 ### Windows 兼容性说明
@@ -106,6 +117,14 @@ skm
 - 在 **macOS/Linux** 上，使用标准的符号链接 (Symbolic Links)。
 - 在 **Windows** 上，工具会自动使用 **Directory Junctions** (目录联接点)。这是 Windows NTFS 文件系统的一种特性，类似于目录的软链接，但通常**不需要管理员权限**即可创建，确保了最佳的开箱即用体验。
 
+
+---
+
+## 📝 更新日志
+
+### v1.0.2
+- 支持本地技能 (Local Skill)：可以直接从本地目录添加技能
+- 菜单引导优化：统一使用数字菜单，添加返回选项，提升终端兼容性
 
 ## 📄 License
 

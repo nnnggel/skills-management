@@ -4,14 +4,14 @@ import { ConfigManager } from './config';
 
 export interface Skill {
   id: string;
-  commitId: string;
+  commitId?: string;
   type: string;
   path?: string;
 }
 
 // 存储格式（不包含 id）
 interface StoredSkill {
-  commitId: string;
+  commitId?: string;
   type: string;
   path?: string;
 }
@@ -20,7 +20,7 @@ export class SkillRegistry {
   private versionsFile: string;
 
   constructor(configManager: ConfigManager) {
-    this.versionsFile = path.join(configManager.getRepoDir(), 'versions.json');
+    this.versionsFile = path.join(configManager.getRepoDir(), 'skills.json');
   }
 
   private getStoredSkills(): Record<string, StoredSkill> {
@@ -34,9 +34,12 @@ export class SkillRegistry {
     fs.writeJsonSync(this.versionsFile, skills, { spaces: 2 });
   }
 
-  public addSkill(id: string, commitId: string, type: string, skillPath?: string) {
+  public addSkill(id: string, type: string, commitId?: string, skillPath?: string) {
     const skills = this.getStoredSkills();
-    skills[id] = { commitId, type, path: skillPath };
+    const skillData: StoredSkill = { type };
+    if (commitId) skillData.commitId = commitId;
+    if (skillPath) skillData.path = skillPath;
+    skills[id] = skillData;
     this.saveSkills(skills);
   }
 

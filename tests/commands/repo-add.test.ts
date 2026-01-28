@@ -77,7 +77,10 @@ describe('Repo Add Command', () => {
   });
 
   it('should prompt for URL if not provided', async () => {
-    vi.mocked(inquirer.prompt).mockResolvedValueOnce({ url: 'https://github.com/user/repo' });
+    // Mock type selection and URL input
+    vi.mocked(inquirer.prompt)
+      .mockResolvedValueOnce({ type: '1' })
+      .mockResolvedValueOnce({ url: 'https://github.com/user/repo' });
     mockNormalizeUrl.mockReturnValue({ url: 'https://github.com/user/repo.git' });
 
     await addSkillInteractive();
@@ -95,7 +98,7 @@ describe('Repo Add Command', () => {
     expect(mockCheckRemoteSkillMd).toHaveBeenCalledWith('user/repo', 'main', undefined);
     expect(mockCloneFull).toHaveBeenCalledWith('https://github.com/user/repo.git', '/mock/repo/path');
     expect(mockGetLocalPathCommitId).toHaveBeenCalledWith('/mock/repo/path', '.');
-    expect(mockAddSkill).toHaveBeenCalledWith('github:user/repo', 'abcdef123', 'github', undefined);
+    expect(mockAddSkill).toHaveBeenCalledWith('github:user/repo', 'github', 'abcdef123', undefined);
   });
 
   it('should clone sparse repo if path exists', async () => {
@@ -118,8 +121,8 @@ describe('Repo Add Command', () => {
     expect(mockGetLocalPathCommitId).toHaveBeenCalledWith('/mock/repo/path', 'skills/pdf');
     expect(mockAddSkill).toHaveBeenCalledWith(
       'github:user/repo/skills/pdf',
-      'abcdef123',
       'github',
+      'abcdef123',
       'skills/pdf'
     );
   });

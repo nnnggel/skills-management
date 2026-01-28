@@ -24,12 +24,12 @@ describe('SkillRegistry', () => {
       vi.mocked(fs.existsSync).mockReturnValue(false);
       vi.mocked(fs.writeJsonSync).mockImplementation(() => { });
 
-      skillRegistry.addSkill('id', 'commit', 'type');
+      skillRegistry.addSkill('id', 'type', 'commit');
 
       expect(fs.writeJsonSync).toHaveBeenCalledWith(
-        path.join(mockRepoDir, 'versions.json'),
+        path.join(mockRepoDir, 'skills.json'),
         {
-          id: { commitId: 'commit', type: 'type', path: undefined }
+          id: { commitId: 'commit', type: 'type' }
         },
         { spaces: 2 }
       );
@@ -47,7 +47,7 @@ describe('SkillRegistry', () => {
       skillRegistry.removeSkill('id');
 
       expect(fs.writeJsonSync).toHaveBeenCalledWith(
-        path.join(mockRepoDir, 'versions.json'),
+        path.join(mockRepoDir, 'skills.json'),
         {},
         { spaces: 2 }
       );
@@ -85,7 +85,7 @@ describe('SkillRegistry', () => {
       skillRegistry.updateSkillVersion('id', 'newCommit');
 
       expect(fs.writeJsonSync).toHaveBeenCalledWith(
-        path.join(mockRepoDir, 'versions.json'),
+        path.join(mockRepoDir, 'skills.json'),
         {
           id: { commitId: 'newCommit', type: 'type' }
         },

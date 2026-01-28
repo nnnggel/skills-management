@@ -64,20 +64,15 @@ async function mainMenu() {
 async function main() {
   const args = process.argv.slice(2);
 
-  if (args.includes('--config')) {
-    await showConfig();
-    return;
-  }
-
-  if (args.includes('--help') || args.includes('-h')) {
-    console.log(`
-Skills Management CLI (skm)
-
-Usage:
-  skm           Enter interactive mode
-  skm --config  View configuration
-`);
-    return;
+  if (args.length > 0) {
+    if (args.includes('--config')) {
+      await showConfig();
+      return;
+    }
+    // 不支持的参数
+    console.error(`Error: Unknown argument(s): ${args.join(' ')}`);
+    console.error('Usage: skm [--config]');
+    process.exit(1);
   }
 
   await mainMenu();

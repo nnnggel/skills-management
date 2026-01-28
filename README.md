@@ -2,7 +2,7 @@
 
 [简体中文](./README.zh-CN.md) | English
 
-`skm` is a powerful CLI tool designed to manage and synchronize "skills" (prompt libraries, instruction sets, or capability modules) across various AI coding agents and projects. It serves as a central hub to download skills from GitHub and selectively link them into your local AI project configurations.
+`skm` is a powerful CLI tool designed to manage and synchronize "skills" (prompt libraries, instruction sets, or capability modules) across various AI coding agents and projects. It serves as a central hub to add skills from GitHub or local directories and selectively link them into your local AI project configurations.
 
 It supports multiple AI environments including **OpenCode**, **Cursor**, **Gemini**, **Antigravity**, **Claude**, and **GitHub** projects.
 
@@ -12,10 +12,13 @@ It supports multiple AI environments including **OpenCode**, **Cursor**, **Gemin
 
 - **Global Skill Repository**: Centralized management of your AI skills.
 - **GitHub Integration**: Add skills directly from GitHub repositories or specific subdirectories (sparse checkout).
+- **Local Skill Support**: Add skills from local directories for development and debugging.
 - **Version Control**: Check for updates and synchronize changes from remote repositories.
 - **Project Detection**: Automatically detects the AI project type in your current directory.
 - **Symbolic Linking**: Efficiently links skills to projects without duplication, keeping them in sync.
 - **Project Isolation**: Manage different sets of skills for different projects.
+
+![Screenshot](repo.png)
 
 ## 💡 Why skm?
 
@@ -24,7 +27,7 @@ It supports multiple AI environments including **OpenCode**, **Cursor**, **Gemin
 - **Automatic Environment Awareness**: You don't need to know where Cursor, Claude, or OpenCode stores their skills. `skm` automatically detects your project environment and handles the directory structures for you.
 - **Clean & Non-Intrusive**: Since skills are symlinked, your project folder stays clean. No extra `.git` folders or heavy files are added to your project's version control.
 - **Self-healing**: Proactively detects and helps you clean up broken symbolic links if a global skill is deleted.
-- **Version Sync**: One-click check for updates across all your global skills to keep your local "AI brain" sharp.
+- **Version Sync**: Check for remote updates to keep your local "AI brain" sharp.
 
 ## 📦 Installation
 
@@ -57,10 +60,18 @@ skm
 
 Select **"1. repo"** from the main menu to manage your global collection of skills.
 
-- **Add Skill**: Enter a GitHub URL to download a skill.
-  - Supports full repositories: `https://github.com/user/repo`
-  - Supports specific subfolders: `https://github.com/user/repo/tree/main/path/to/skill`
-- **Update Skills**: Checks for newer commits on the remote GitHub repository and updates your local copy.
+#### Add Skill
+
+**GitHub Type**:
+- Full repositories: `https://github.com/user/repo` (example: https://github.com/blader/humanizer)
+- Specific subfolders: `https://github.com/user/repo/tree/main/path/to/skill` (example: https://github.com/anthropics/skills/tree/main/skills/pdf)
+
+**Local Type**:
+- Local directories: `/local/path/to/skill` (example: `~/Desktop/myskill`)
+
+#### Other Operations
+
+- **Update Skills**: Checks for newer commits on the remote GitHub repository and updates your local copy (GitHub type only).
 - **Delete Skills**: Remove skills from your global repository.
 
 ### 2. Project Skill Management (`list`)
@@ -96,7 +107,7 @@ Select **"2. list(type)"** to manage skills for the current project.
 
 - **`config.json`**: Global configuration file. It stores system-level settings and metadata.
 - **`repo/`**: The heart of the management system.
-    - **`versions.json`**: The skill registry. It tracks all added skills, their unique IDs, current commit hashes (for version control), and original paths.
+    - **`skills.json`**: The skill registry. It tracks all added skills, their unique IDs, current commit hashes (for version control), and original paths.
     - **`github__[user]__[repo]__[subpath]/`**: Local Git repositories. `skm` flattens the ID (replacing `/` with `__`) to create safe directory names.
     - **Note**: `skm` handles complex paths like `github:user/repo/path/to/skill` by creating a unique folder like `github__user__repo__path__to__skill`.
 
@@ -105,7 +116,13 @@ Select **"2. list(type)"** to manage skills for the current project.
 - On **macOS/Linux**, it uses standard symbolic links.
 - On **Windows**, it automatically uses **Directory Junctions** (a type of symbolic link for folders) to ensure capability without requiring Administrator privileges or Developer Mode.
 
+---
 
+## 📝 Changelog
+
+### v1.0.2
+- Local Skill Support: Add skills directly from local directories
+- Menu Navigation Optimization: Unified numeric menu style, added return options, improved terminal compatibility
 
 ## 📄 License
 
