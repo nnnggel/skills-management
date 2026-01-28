@@ -328,7 +328,15 @@ async function addLocalSkillInteractive() {
     return;
   }
 
-  const localPath = path.resolve(answer.path);
+  // 展开 ~ 到用户主目录
+  let inputPath = answer.path.trim();
+  if (inputPath.startsWith('~/')) {
+    inputPath = path.join(os.homedir(), inputPath.slice(2));
+  } else if (inputPath === '~') {
+    inputPath = os.homedir();
+  }
+
+  const localPath = path.resolve(inputPath);
 
   // 检查路径是否存在
   if (!fs.existsSync(localPath)) {

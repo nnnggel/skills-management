@@ -120,7 +120,7 @@ Select **"2. list(type)"** to manage skills for the current project.
 
 ## 📝 Changelog
 
-### v1.0.2
+### v1.0.3
 - Local Skill Support: Add skills directly from local directories
 - Menu Navigation Optimization: Unified numeric menu style, added return options, improved terminal compatibility
 
