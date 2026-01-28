@@ -34,7 +34,7 @@
 可以直接从 npm 安装：
 
 ```bash
-npm install -g @nnnggel/skills-management
+npm install -g skills-management
 ```
 
 或者从源码安装：
