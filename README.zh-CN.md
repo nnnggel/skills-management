@@ -98,25 +98,7 @@ skm
 | **Claude** | `.claude/skills` |
 | **OpenCode** | `.opencode/skills` |
 
----
-
-## 🏗️ 目录结构与运行机制
-
-`skm` 将所有的全局数据和配置存储在用户主目录下的 `~/.skills-management` 文件夹中。这种设计确保了技能只需下载一次，即可在多个项目间共享。
-
-### 内部结构：
-
-- **`config.json`**: 全局配置文件，存储系统级设置和元数据。
-- **`repo/`**: 管理系统的核心目录。
-    - **`skills.json`**: 技能注册表（数据库）。记录了所有已添加技能的 ID、当前 Commit Hash（用于版本追踪）、检出类型和路径信息。
-    - **`[type]__[name]/`**: 本地 Skill 仓库存储中心。`skm` 会将 ID 扁平化（将 `/` 替换为 `__`）以创建安全的文件目录名。例如 `github:user/repo/path` 会被存储为 `github__user__repo__path`，`local:myskill` 会被存储为 `local__myskill`。
-
-### Windows 兼容性说明
-`skm` 完全兼容 Windows 系统。
-- 在 **macOS/Linux** 上，使用标准的符号链接 (Symbolic Links)。
-- 在 **Windows** 上，工具会自动使用 **Directory Junctions** (目录联接点)。这是 Windows NTFS 文件系统的一种特性，类似于目录的软链接，但通常**不需要管理员权限**即可创建，确保了最佳的开箱即用体验。
-
-### 自定义 AI 工具配置
+#### 自定义 AI 工具配置
 
 你可以通过在 `~/.skills-management/config.json` 中添加 `aiTools` 来自定义 AI 工具检测：
 
@@ -136,6 +118,23 @@ skm
 
 > **注意**: 配置 `aiTools` 后会完全替换默认配置。如果需要保留部分默认配置，请将它们包含在自定义配置中。
 
+---
+
+## 🏗️ 目录结构与运行机制
+
+`skm` 将所有的全局数据和配置存储在用户主目录下的 `~/.skills-management` 文件夹中。这种设计确保了技能只需下载一次，即可在多个项目间共享。
+
+### 内部结构：
+
+- **`config.json`**: 全局配置文件，存储系统级设置和元数据。
+- **`repo/`**: 管理系统的核心目录。
+    - **`skills.json`**: 技能注册表（数据库）。记录了所有已添加技能的 ID、当前 Commit Hash（用于版本追踪）、检出类型和路径信息。
+    - **`[type]__[name]/`**: 本地 Skill 仓库存储中心。`skm` 会将 ID 扁平化（将 `/` 替换为 `__`）以创建安全的文件目录名。例如 `github:user/repo/path` 会被存储为 `github__user__repo__path`，`local:myskill` 会被存储为 `local__myskill`。
+
+### Windows 兼容性说明
+`skm` 完全兼容 Windows 系统。
+- 在 **macOS/Linux** 上，使用标准的符号链接 (Symbolic Links)。
+- 在 **Windows** 上，工具会自动使用 **Directory Junctions** (目录联接点)。这是 Windows NTFS 文件系统的一种特性，类似于目录的软链接，但通常**不需要管理员权限**即可创建，确保了最佳的开箱即用体验。
 
 ---
 
