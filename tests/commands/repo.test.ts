@@ -17,30 +17,31 @@ describe('Repo Commands', () => {
 
   beforeEach(() => {
     vi.resetAllMocks();
-    
+
     mockGetAllSkills = vi.fn().mockReturnValue([]);
     mockRemoveSkill = vi.fn();
     mockGetRepoPath = vi.fn().mockReturnValue('/mock/repo/path');
 
-    vi.mocked(SkillRegistry).mockImplementation(function() {
+    vi.mocked(SkillRegistry).mockImplementation(function () {
       return {
         getAllSkills: mockGetAllSkills,
         removeSkill: mockRemoveSkill
       } as any;
     });
 
-    vi.mocked(ConfigManager).mockImplementation(function() {
+    vi.mocked(ConfigManager).mockImplementation(function () {
       return {
         getRepoPath: mockGetRepoPath,
         getHomeDir: vi.fn(),
         getRepoDir: vi.fn(),
         getSafeName: vi.fn(),
-        parseSafeName: vi.fn()
+        parseSafeName: vi.fn(),
+        getAITools: vi.fn().mockReturnValue(null)
       } as any;
     });
 
-    vi.spyOn(console, 'log').mockImplementation(() => {});
-    vi.spyOn(console, 'table').mockImplementation(() => {});
+    vi.spyOn(console, 'log').mockImplementation(() => { });
+    vi.spyOn(console, 'table').mockImplementation(() => { });
   });
 
   afterEach(() => {

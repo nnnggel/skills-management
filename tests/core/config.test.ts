@@ -9,14 +9,14 @@ vi.mock('fs-extra');
 
 describe('ConfigManager', () => {
   const mockHomeDir = '/mock/home';
-  
+
   beforeEach(() => {
     vi.resetAllMocks();
     vi.mocked(os.homedir).mockReturnValue(mockHomeDir);
     vi.mocked(os.platform).mockReturnValue('darwin');
-    vi.mocked(fs.ensureDirSync).mockImplementation(() => {});
+    vi.mocked(fs.ensureDirSync).mockImplementation(() => { });
     vi.mocked(fs.existsSync).mockReturnValue(false);
-    vi.mocked(fs.writeJsonSync).mockImplementation(() => {});
+    vi.mocked(fs.writeJsonSync).mockImplementation(() => { });
   });
 
   it('should initialize directories and config file', () => {
@@ -50,5 +50,33 @@ describe('ConfigManager', () => {
     const id = 'github:user/repo';
     const expectedPath = path.join(mockHomeDir, '.skills-management', 'repo', 'github__user__repo');
     expect(config.getRepoPath(id)).toBe(expectedPath);
+  });
+
+  describe('getAITools', () => {
+    it('should return user configured aiTools', () => {
+      const customAITools = [
+        { type: 'custom', skillDirs: ['.custom/skills'] }
+      ];
+      vi.mocked(fs.existsSync).mockReturnValue(true);
+      vi.mocked(fs.readJsonSync).mockReturnValue({ aiTools: customAITools });
+
+      const config = new ConfigManager();
+      expect(config.getAITools()).toEqual(customAITools);
+    });
+
+    it('should return null if aiTools not configured', () => {
+      vi.mocked(fs.existsSync).mockReturnValue(true);
+      vi.mocked(fs.readJsonSync).mockReturnValue({ system: 'darwin' });
+
+      const config = new ConfigManager();
+      expect(config.getAITools()).toBeNull();
+    });
+
+    it('should return null if config file does not exist', () => {
+      vi.mocked(fs.existsSync).mockReturnValue(false);
+
+      const config = new ConfigManager();
+      expect(config.getAITools()).toBeNull();
+    });
   });
 });

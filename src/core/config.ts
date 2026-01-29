@@ -35,12 +35,12 @@ export class ConfigManager {
     if (parts.length < 2) {
       return id.replace(/\//g, '__');
     }
-    
+
     const type = parts[0];
     const rest = parts.slice(1).join(':');
-    
+
     const safeRest = rest.replace(/\//g, '__');
-    
+
     return `${type}__${safeRest}`;
   }
 
@@ -49,14 +49,38 @@ export class ConfigManager {
     if (parts.length < 2) {
       return safeName;
     }
-    
+
     const type = parts[0];
     const rest = parts.slice(1).join('/');
-    
+
     return `${type}:${rest}`;
   }
 
   public getRepoPath(id: string): string {
     return path.join(this.repoDir, this.getSafeName(id));
   }
+
+  /**
+   * 获取用户自定义的 AI Tools 配置
+   * @returns 用户配置的 aiTools 数组，如果未配置则返回 null
+   */
+  public getAITools(): AIToolConfig[] | null {
+    try {
+      if (fs.existsSync(this.configFile)) {
+        const config = fs.readJsonSync(this.configFile);
+        if (config.aiTools && Array.isArray(config.aiTools)) {
+          return config.aiTools;
+        }
+      }
+    } catch (error: any) {
+      console.error(`Error: Failed to read config.json: ${error.message}`);
+      process.exit(1);
+    }
+    return null;
+  }
+}
+
+export interface AIToolConfig {
+  type: string;
+  skillDirs: string[];
 }

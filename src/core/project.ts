@@ -1,7 +1,8 @@
 import fs from 'fs-extra';
 import path from 'path';
+import { ConfigManager, AIToolConfig } from './config';
 
-export type ProjectType = 'opencode' | 'cursor' | 'antigravity' | 'github' | 'claude' | 'unknown';
+export type ProjectType = 'opencode' | 'cursor' | 'antigravity' | 'github' | 'claude' | 'unknown' | string;
 
 export interface ProjectInfo {
   type: ProjectType;
@@ -11,9 +12,10 @@ export interface ProjectInfo {
 
 export class ProjectDetector {
   private cwd: string;
+  private aiTools: AIToolConfig[];
 
-  // 每个 AI 工具及其对应的 skills 目录路径
-  private static readonly AI_TOOLS: { type: ProjectType; skillDirs: string[] }[] = [
+  // 默认的 AI 工具配置
+  private static readonly DEFAULT_AI_TOOLS: AIToolConfig[] = [
     // antigravity: .gemini/antigravity/global_skills/skills, .agent/skills
     { type: 'antigravity', skillDirs: ['.gemini/antigravity/global_skills/skills', '.agent/skills'] },
     // github: .copilot/skills, .github/skills
@@ -28,6 +30,11 @@ export class ProjectDetector {
 
   constructor(cwd: string = process.cwd()) {
     this.cwd = cwd;
+
+    // 优先使用用户配置的 AI Tools，否则使用默认配置
+    const configManager = new ConfigManager();
+    const userAITools = configManager.getAITools();
+    this.aiTools = userAITools || ProjectDetector.DEFAULT_AI_TOOLS;
   }
 
   /**
@@ -37,7 +44,7 @@ export class ProjectDetector {
   public detectAll(): ProjectInfo[] {
     const projects: ProjectInfo[] = [];
 
-    for (const tool of ProjectDetector.AI_TOOLS) {
+    for (const tool of this.aiTools) {
       // 检查每个 skillDir，找到第一个父目录存在的
       for (const skillDir of tool.skillDirs) {
         const fullSkillDir = path.join(this.cwd, skillDir);

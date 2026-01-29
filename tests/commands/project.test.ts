@@ -41,7 +41,8 @@ describe('Project Command', () => {
     vi.mocked(ConfigManager).mockImplementation(function () {
       return {
         getRepoPath: mockGetRepoPath,
-        getSafeName: mockGetSafeName
+        getSafeName: mockGetSafeName,
+        getAITools: vi.fn().mockReturnValue(null)
       } as any;
     });
 

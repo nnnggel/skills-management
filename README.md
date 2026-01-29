@@ -115,9 +115,34 @@ Select **"2. list(type)"** to manage skills for the current project.
 - On **macOS/Linux**, it uses standard symbolic links.
 - On **Windows**, it automatically uses **Directory Junctions** (a type of symbolic link for folders) to ensure capability without requiring Administrator privileges or Developer Mode.
 
+### Custom AI Tools Configuration
+
+You can customize the AI tools detection by adding `aiTools` to your `~/.skills-management/config.json`:
+
+```json
+{
+  "system": "darwin",
+  "aiTools": [
+    { "type": "cursor", "skillDirs": [".cursor/skills"] },
+    { "type": "custom-ai", "skillDirs": [".custom-ai/skills", ".custom-ai/prompts"] }
+  ]
+}
+```
+
+Each entry requires:
+- **`type`**: A unique identifier for the AI tool (used in menu display)
+- **`skillDirs`**: An array of possible skill directory paths (relative to project root)
+
+> **Note**: When `aiTools` is configured, it completely replaces the default configuration. If you want to keep some defaults, include them in your custom configuration.
+
 ---
 
 ## 📝 Changelog
+
+### v1.0.5
+- Display version number in main menu
+- Show non-skm managed skills when managing project skills
+- Support custom AI tools configuration via `config.json`
 
 ### v1.0.4
 - Adjusted AI tool detection directories to match official configurations

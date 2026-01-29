@@ -41,7 +41,8 @@ describe('Repo Update Command', () => {
 
     vi.mocked(ConfigManager).mockImplementation(function () {
       return {
-        getRepoPath: mockGetRepoPath
+        getRepoPath: mockGetRepoPath,
+        getAITools: vi.fn().mockReturnValue(null)
       } as any;
     });
 

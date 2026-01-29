@@ -18,12 +18,13 @@ async function showConfig() {
 }
 
 async function mainMenu() {
+  const packageJson = fs.readJsonSync(`${__dirname}/../package.json`);
   const projectDetector = new ProjectDetector();
 
   while (true) {
     const projects = projectDetector.detectAll();
 
-    console.log('\n=== Skills Management (skm) ===');
+    console.log(`\n=== Skills Management (skm) v${packageJson.version} ===`);
     console.log('1. repo - Manage global skills repository');
 
     const menuMap: Record<string, any> = {
@@ -65,13 +66,18 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length > 0) {
+    if (args.includes('--version') || args.includes('-v')) {
+      const packageJson = fs.readJsonSync(`${__dirname}/../package.json`);
+      console.log(`skm version ${packageJson.version}`);
+      return;
+    }
     if (args.includes('--config')) {
       await showConfig();
       return;
     }
     // 不支持的参数
     console.error(`Error: Unknown argument(s): ${args.join(' ')}`);
-    console.error('Usage: skm [--config]');
+    console.error('Usage: skm [--config] [--version|-v]');
     process.exit(1);
   }
 

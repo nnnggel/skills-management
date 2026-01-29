@@ -102,6 +102,40 @@ function findBrokenLinks(skillDir: string): string[] {
   return broken;
 }
 
+/**
+ * 查找不是由 skm 管理的（非符号链接）但包含 SKILL.md 的目录
+ */
+function findOtherSkills(skillDir: string): string[] {
+  const others: string[] = [];
+
+  if (!fs.existsSync(skillDir)) {
+    return others;
+  }
+
+  const entries = fs.readdirSync(skillDir);
+  for (const entry of entries) {
+    const entryPath = path.join(skillDir, entry);
+    try {
+      const stats = fs.lstatSync(entryPath);
+      // 跳过符号链接（由 skm 管理的）
+      if (stats.isSymbolicLink()) {
+        continue;
+      }
+      // 检查是否是目录且包含 SKILL.md
+      if (stats.isDirectory()) {
+        const skillMdPath = path.join(entryPath, 'SKILL.md');
+        if (fs.existsSync(skillMdPath)) {
+          others.push(entry);
+        }
+      }
+    } catch {
+      // 忽略错误
+    }
+  }
+
+  return others;
+}
+
 export async function manageProjectSkills(projectInfo?: ProjectInfo) {
   const configManager = new ConfigManager();
   const skillRegistry = new SkillRegistry(configManager);
@@ -169,6 +203,15 @@ export async function manageProjectSkills(projectInfo?: ProjectInfo) {
   };
 
   const linkedSkills = getLinkedSkills();
+
+  // 显示项目中其他非 skm 管理的 skills
+  const otherSkills = findOtherSkills(projectInfo.skillDir);
+  if (otherSkills.length > 0) {
+    console.log('\n📁 Other skills in project (not managed by skm):');
+    for (const skillName of otherSkills.sort()) {
+      console.log(`  - ${skillName}`);
+    }
+  }
 
   console.log('\n=== Link/Unlink Skills ===');
   console.log('Use space to select/unselect, enter to confirm:\n');

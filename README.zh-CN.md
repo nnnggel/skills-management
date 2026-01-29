@@ -116,10 +116,35 @@ skm
 - 在 **macOS/Linux** 上，使用标准的符号链接 (Symbolic Links)。
 - 在 **Windows** 上，工具会自动使用 **Directory Junctions** (目录联接点)。这是 Windows NTFS 文件系统的一种特性，类似于目录的软链接，但通常**不需要管理员权限**即可创建，确保了最佳的开箱即用体验。
 
+### 自定义 AI 工具配置
+
+你可以通过在 `~/.skills-management/config.json` 中添加 `aiTools` 来自定义 AI 工具检测：
+
+```json
+{
+  "system": "darwin",
+  "aiTools": [
+    { "type": "cursor", "skillDirs": [".cursor/skills"] },
+    { "type": "custom-ai", "skillDirs": [".custom-ai/skills", ".custom-ai/prompts"] }
+  ]
+}
+```
+
+每个条目需要：
+- **`type`**: AI 工具的唯一标识符（在菜单中显示）
+- **`skillDirs`**: 可能的技能目录路径数组（相对于项目根目录）
+
+> **注意**: 配置 `aiTools` 后会完全替换默认配置。如果需要保留部分默认配置，请将它们包含在自定义配置中。
+
 
 ---
 
 ## 📝 更新日志
+
+### v1.0.5
+- 主菜单显示版本号
+- 项目技能管理时显示非 skm 管理的 skills
+- 支持用户在 `config.json` 中自定义（覆盖）AI 工具路径
 
 ### v1.0.4
 - 调整了识别 AI 工具的目录，与官方配置保持一致
