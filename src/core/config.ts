@@ -2,6 +2,19 @@ import os from 'os';
 import path from 'path';
 import fs from 'fs-extra';
 
+/**
+ * 展开 `~` / `~/xxx` 为绝对路径
+ */
+export function expandHome(targetPath: string, homeDir: string = os.homedir()): string {
+  if (targetPath === '~') {
+    return homeDir;
+  }
+  if (targetPath.startsWith('~/')) {
+    return path.join(homeDir, targetPath.slice(2));
+  }
+  return targetPath;
+}
+
 export class ConfigManager {
   private homeDir: string;
   private repoDir: string;
@@ -81,6 +94,14 @@ export class ConfigManager {
 }
 
 export interface AIToolConfig {
+  /** 工具标识（唯一） */
   type: string;
+  /** 项目级 skills 目录（相对项目根） */
   skillDirs: string[];
+  /** 用户级 skills 目录（`~/...` 形式），可选 */
+  globalSkillDirs?: string[];
+  /** 判断该工具是否安装的探测路径，可选（缺省由 globalSkillDirs 推导） */
+  detectGlobal?: string[];
+  /** 该工具保留的目录名，skm 不得写入/删除 */
+  reservedNames?: string[];
 }

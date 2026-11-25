@@ -4,7 +4,7 @@
 
 `skm` is a powerful CLI tool designed to manage and synchronize "skills" (prompt libraries, instruction sets, or capability modules) across various AI coding agents and projects. It serves as a central hub to add skills from GitHub or local directories and selectively link them into your local AI project configurations.
 
-It supports multiple AI environments including **OpenCode**, **Cursor**, **Gemini**, **Antigravity**, **Claude**, and **GitHub** projects.
+It supports the **Agent Skills open standard** (`<dir>/<name>/SKILL.md`) across 60+ AI coding agents, including **Claude Code**, **Codex**, **Gemini CLI**, **Cursor**, **OpenCode**, **GitHub Copilot**, **Antigravity**, **Windsurf**, **Kiro**, **Roo Code**, **Qwen Code**, **DeepSeek Harness (dsh)** and many more.
 
 ---
 
@@ -15,6 +15,8 @@ It supports multiple AI environments including **OpenCode**, **Cursor**, **Gemin
 - **Local Skill Support**: Add skills from local directories for development and debugging.
 - **Version Control**: Check for updates and synchronize changes from remote repositories.
 - **Project Detection**: Automatically detects the AI project type in your current directory.
+- **Project + User Scope**: Link skills into a project (`.claude/skills`) or into your home directory (`~/.claude/skills`) so they are available everywhere.
+- **Shared Directory Awareness**: `.agents/skills` is read by ~20 agents at once; `skm` groups them into a single menu entry instead of spamming duplicates.
 - **Symbolic Linking**: Efficiently links skills to projects without duplication, keeping them in sync.
 - **Project Isolation**: Manage different sets of skills for different projects.
 
@@ -84,17 +86,59 @@ Select **"2. list(type)"** to manage skills for the current project.
 - **Checkbox Interface**: Use `Space` to select or deselect skills, and `Enter` to confirm.
 - **Symlinks**: Selected skills are symlinked contents from your global repo into your project's skill directory (e.g., `.opencode/skills/`).
 
-### Supported Project Structures
+### Supported Agents
 
-`skm` automatically detects and installs skills into these directories:
+`skm` detects and installs skills into the following directories. The full, authoritative list is the `AGENTS` table in `src/core/agents.ts`; the rationale and sources live in [`directives/agents-skills-paths.md`](./directives/agents-skills-paths.md).
 
-| AI Type | Skills Installation Path |
-|---------|---------------------------|
-| **Antigravity** | `.gemini/antigravity/global_skills/skills` or `.agent/skills` |
-| **GitHub** | `.copilot/skills` or `.github/skills` |
-| **Cursor** | `.cursor/skills` |
-| **Claude** | `.claude/skills` |
-| **OpenCode** | `.opencode/skills` |
+#### Shared `.agents/skills` group (one directory, many agents)
+
+| Agents | Project | User (global) |
+| --- | --- | --- |
+| Codex, Gemini CLI, Cursor, GitHub Copilot, Cline, Zed, Warp, Kimi Code, Amp, Replit, Droid, Kilo, Deep Agents, Firebender, PromptScript, Universal, Loaf, fx, Dexto, Sarvam Code | `.agents/skills` | `~/.agents/skills` or `~/.config/agents/skills` |
+| Antigravity, Antigravity CLI | `.agents/skills` | `~/.gemini/config/skills`, `~/.antigravity/skills` |
+
+#### Dedicated directories
+
+| Agent | Project | User (global) |
+| --- | --- | --- |
+| Claude Code | `.claude/skills` | `~/.claude/skills` (name `synced` reserved) |
+| OpenCode | `.opencode/skills`, `.opencode/skill` | `~/.config/opencode/skills` |
+| Pi | `.pi/skills`, `.agents/skills` | `~/.pi/agent/skills`, `~/.agents/skills` (`PI_CODING_AGENT_DIR` overrides the agent dir) |
+| GitHub (legacy) | `.github/skills`, `.copilot/skills` | — |
+| Windsurf | `.windsurf/skills` | `~/.codeium/windsurf/skills` |
+| Kiro | `.kiro/skills` | `~/.kiro/skills` |
+| Roo Code | `.roo/skills` | `~/.roo/skills` |
+| Qwen Code | `.qwen/skills` | `~/.qwen/skills` |
+| Trae / Trae CN | `.trae/skills` | `~/.trae/skills` / `~/.trae-cn/skills` |
+| DeepSeek Harness (dsh) | `.dsh/skills` | `~/.dsh/skills` |
+| CodeBuddy, Qoder, Qoder CN, Cursor, Continue, Crush, Goose, Augment, Junie, Zencoder, Tabnine CLI, Devin, ForgeCode, Grok, iFlow, Kode, Lingma, MiniMax, Mistral Vibe, Moxby, Mux, Neovate, Ona, OpenHands, Pochi, Posit Assistant, Reasonix, Rovo Dev, Terramind, Tinycloud, ZCode, IBM Bob, CodeArts, Codemaker, Code Studio, Command Code, Cortex, Hermes, inference.sh, Jazz, Kimchi, MCPJam, AiderDesk, AstrBot, Eve | see `src/core/agents.ts` | see `src/core/agents.ts` |
+
+#### How detection works
+
+- **Project scope**: for dot-directories (`.claude/skills`) the parent directory existing is enough to consider the agent installed. For non-hidden directories (`skills/`, `data/skills`) the directory itself must exist — otherwise every repository would match.
+- **User scope**: an agent shows up when its config directory exists (`~/.claude`, `~/.codex`, `~/.dsh`, ...) or when the skills directory itself already exists. Only detected agents appear in the menu.
+- **Deduplication**: directories are grouped by resolved absolute path. `.agents/skills` produces one entry whose label lists the clients that share it.
+- **One directory per agent**: if an agent accepts several locations, the first match wins.
+- **Global dirs are exclusive**: a directory that is some agent's user-level skill dir (`~/.dsh/skills`, `~/.claude/skills`) is never offered as a project target — so running `skm` inside `~/.dsh` only shows the global entry.
+- **Project dirs must be namespaced**: auto-detection only accepts hidden dirs (`.claude/skills`) or vendor-prefixed dirs (`data/skills`). A bare `skills/` at the repository root is too generic and is not auto-detected (OpenClaw users can add `{"type":"openclaw","skillDirs":["skills"]}` to `aiTools`).
+
+#### Menu context
+
+The menu only shows what makes sense where you are:
+
+| Where you run `skm` | What the menu lists |
+| --- | --- |
+| Inside an agent config dir (`~/.dsh`, `~/.claude`, `~/.pi/agent`, or any subdirectory) | Only that agent's user-level dir (`~/.dsh/skills`), even if it does not exist yet |
+| Inside a project (a detected `.claude/`, `.dsh/`, `.agents/`, ... exists) | Only the project-level dirs (several may be listed) |
+| Anywhere else (`~`, `~/Desktop`, an empty dir) | Every user-level dir; the home directory itself is never treated as a project root |
+
+When the menu is filtered, a `list(all)` entry is appended so you can still reach every agent and scope in one session.
+
+#### Known limitations
+
+- **Linked folder names carry the source prefix** (`github__user__repo__path`, `local__myskill`). This keeps multiple same-named skills side by side on disk and preserves provenance, but it violates the “`name` must match the parent directory” rule. Claude Code and Gemini CLI are unaffected; OpenCode loads it but exposes the folder name as the skill id; **VS Code / GitHub Copilot will not load it** (“If the name does not match, the skill is not loaded.”).
+- **Symlink support in VS Code is unverified** (its documentation does not mention symlinks).
+- Global scope is limited to agents `skm` detects as installed; it will not create config directories for tools you do not use.
 
 #### Custom AI Tools Configuration
 
@@ -105,7 +149,13 @@ You can customize the AI tools detection by adding `aiTools` to your `~/.skills-
   "system": "darwin",
   "aiTools": [
     { "type": "cursor", "skillDirs": [".cursor/skills"] },
-    { "type": "custom-ai", "skillDirs": [".custom-ai/skills", ".custom-ai/prompts"] }
+    {
+      "type": "custom-ai",
+      "skillDirs": [".custom-ai/skills", ".custom-ai/prompts"],
+      "globalSkillDirs": ["~/.custom-ai/skills"],
+      "detectGlobal": ["~/.custom-ai"],
+      "reservedNames": []
+    }
   ]
 }
 ```
@@ -113,6 +163,11 @@ You can customize the AI tools detection by adding `aiTools` to your `~/.skills-
 Each entry requires:
 - **`type`**: A unique identifier for the AI tool (used in menu display)
 - **`skillDirs`**: An array of possible skill directory paths (relative to project root)
+
+Optional fields:
+- **`globalSkillDirs`**: User-level skill directories (`~/...`), enables `list(... · global)` entries
+- **`detectGlobal`**: Paths used to decide whether the tool is installed (derived from `globalSkillDirs` when omitted)
+- **`reservedNames`**: Folder names `skm` must never write or delete (e.g. Claude Code's `synced`)
 
 > **Note**: When `aiTools` is configured, it completely replaces the default configuration. If you want to keep some defaults, include them in your custom configuration.
 
@@ -138,6 +193,13 @@ Each entry requires:
 
 
 ## 📝 Changelog
+
+### v1.1.0
+- Full Agent Skills coverage: 60+ agents (Claude Code, Codex, Gemini CLI, Cursor, OpenCode, GitHub Copilot, Antigravity, Windsurf, Kiro, Roo Code, Qwen Code, DeepSeek Harness and more)
+- User-level (global) scope: link skills into `~/.claude/skills`, `~/.agents/skills`, `~/.dsh/skills`, ...
+- Shared-directory deduplication: `.agents/skills` is one menu entry that lists every client reading it
+- Fixes: outdated Antigravity paths removed; non-hidden directories (`skills/`) no longer match every repository
+- Safety: reserved names (Claude Code's `synced`) are never written or deleted; broken-symlink cleanup defaults to *no* for user scope
 
 ### v1.0.5
 - Display version number in main menu

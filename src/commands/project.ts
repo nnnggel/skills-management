@@ -27,6 +27,11 @@ export async function linkSkillToProject(skillId: string, projectInfo: ProjectIn
   const linkPath = path.join(projectInfo.skillDir, safeName);
   const repoPath = configManager.getRepoPath(skill.id);
 
+  if (isReservedName(projectInfo, safeName)) {
+    console.log(`"${safeName}" is a directory name reserved by ${projectInfo.type}. Skipped.`);
+    return;
+  }
+
   // 确定链接目标路径：
   // - 如果有 path（非根路径 skill），链接到 repoPath/skill.path
   // - 如果没有 path（根路径 skill），链接到 repoPath
@@ -60,6 +65,11 @@ export async function unlinkSkillFromProject(skillId: string, projectInfo: Proje
   const safeName = configManager.getSafeName(skillId);
   const linkPath = path.join(projectInfo.skillDir, safeName);
 
+  if (isReservedName(projectInfo, safeName)) {
+    console.log(`"${safeName}" is a directory name reserved by ${projectInfo.type}. Skipped.`);
+    return;
+  }
+
   if (!fs.existsSync(linkPath)) {
     console.log(`Skill ${skillId} is not linked.`);
     return;
@@ -71,6 +81,15 @@ export async function unlinkSkillFromProject(skillId: string, projectInfo: Proje
   } catch (error: any) {
     console.error(`Failed to unlink ${skillId}: ${error.message}`);
   }
+}
+
+/**
+ * 该目录名是否被所属 agent 保留（例如 Claude Code 的 ~/.claude/skills/synced/）
+ */
+function isReservedName(projectInfo: ProjectInfo, safeName: string): boolean {
+  const reserved = projectInfo.reservedNames ?? [];
+  const target = safeName.toLowerCase();
+  return reserved.some(name => name.toLowerCase() === target);
 }
 
 /**
@@ -151,7 +170,7 @@ export async function manageProjectSkills(projectInfo?: ProjectInfo) {
     return;
   }
 
-  console.log(`\nManaging ${projectInfo.type} project skills`);
+  console.log(`\nManaging ${projectInfo.type} ${projectInfo.scope ?? 'project'} skills`);
   console.log(`Skill directory: ${projectInfo.skillDir}\n`);
 
   fs.ensureDirSync(projectInfo.skillDir);
@@ -169,7 +188,8 @@ export async function manageProjectSkills(projectInfo?: ProjectInfo) {
         type: 'confirm',
         name: 'cleanup',
         message: 'Remove broken symlinks?',
-        default: true
+        // 用户级目录在 home 下，破坏半径更大，默认不删
+        default: (projectInfo.scope ?? 'project') !== 'global'
       }
     ]);
 

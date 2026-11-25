@@ -10,6 +10,7 @@ logs/
 *.log
 
 # Runtime / temp
+.tmp/
 tmp/
 temp/
 *.tmp

@@ -17,14 +17,38 @@ async function showConfig() {
   }
 }
 
+/**
+ * 生成菜单项描述：目录 + 作用域 + 共用该目录的 agent 别名
+ */
+function describeProject(project: ProjectInfo): string {
+  const aliases = project.aliases ?? [project.type];
+  const scope = project.scope ?? 'project';
+  const where = project.label ?? project.type;
+  const shown = aliases.slice(0, 4).join('/');
+  const more = aliases.length > 4 ? ` +${aliases.length - 4}` : '';
+  const detail = aliases.length > 1 ? `${shown}${more}` : project.type;
+
+  return `list(${where}) - ${scope} · ${detail}`;
+}
+
 async function mainMenu() {
   const packageJson = fs.readJsonSync(`${__dirname}/../package.json`);
   const projectDetector = new ProjectDetector();
 
-  while (true) {
-    const projects = projectDetector.detectAll();
+  let running = true;
+  let showAll = false;
+
+  while (running) {
+    const menu = showAll ? projectDetector.detectAllEntries() : projectDetector.detectMenu();
 
     console.log(`\n=== Skills Management (skm) v${packageJson.version} ===`);
+    if (menu.filtered) {
+      const where =
+        menu.context.scope === 'global'
+          ? `inside ${menu.context.agentId}'s config directory`
+          : 'inside this project';
+      console.log(`(showing ${where} only)`);
+    }
     console.log('1. repo - Manage global skills repository');
 
     const menuMap: Record<string, any> = {
@@ -32,9 +56,15 @@ async function mainMenu() {
     };
 
     let currentIndex = 2;
-    for (const project of projects) {
-      console.log(`${currentIndex}. list(${project.type}) - Manage skills for ${project.type}`);
+    for (const project of menu.entries) {
+      console.log(`${currentIndex}. ${describeProject(project)}`);
       menuMap[currentIndex.toString()] = { action: 'list', project };
+      currentIndex++;
+    }
+
+    if (menu.filtered) {
+      console.log(`${currentIndex}. list(all) - show every agent and scope`);
+      menuMap[currentIndex.toString()] = { action: 'all' };
       currentIndex++;
     }
 
@@ -53,7 +83,9 @@ async function mainMenu() {
     const { action, project } = menuMap[answer.choice];
 
     if (action === 'exit') {
-      process.exit(0);
+      running = false;
+    } else if (action === 'all') {
+      showAll = true;
     } else if (action === 'repo') {
       await repoMenu();
     } else if (action === 'list' && project) {
